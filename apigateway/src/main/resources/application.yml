@@ -1,0 +1,55 @@
+server:
+  port: 8999
+
+eureka:
+  instance:
+    hostname: localhost
+  client: # way to change default port of eureka
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service # here localhost also we can write
+          predicates:
+            - Path=/user/**
+          filters: # this is for fallback
+            - name: CircuitBreaker
+              args:
+                name: user-service
+                fallbackuri: forward:/userServiceFallback
+        - id: contact-service
+          uri: lb://contact-service
+          predicates:
+            - Path=/contact/**
+          filters:  # this is for fallback
+            - name: CircuitBreaker
+              args:
+                name: contact-service
+                fallbackuri: forward:/contactServiceFallback
+
+# whithin this time if server is not responding then we can say it is down
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+
+# enable stream to be monitored by hystrix dashboard
+# send stream of services to dashboard
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream # this is gove to dashboard
+

@@ -1,0 +1,19 @@
+server:
+  port: 9002
+
+# Now eureka will pick this name instead of unkown
+# we can use this microservice name anywhere
+# because IP and hostname change hota rahega par SERVICE name will same
+spring:
+  application:
+    name: contact-service
+
+# Here we can tell where eureka is running by default it is pick from 8761 port of same server
+eureka:
+  instance:
+    hostname: localhost
+  client: # way to change default port of eureka
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/

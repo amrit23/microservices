@@ -1,0 +1,16 @@
+server:
+  port: 8080 # 8761 is the default port
+
+# we have to tell Eureka that it shud not be register itself
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+
+
